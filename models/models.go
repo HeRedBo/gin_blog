@@ -3,6 +3,7 @@ package models
 import (
 	"gin-blog/pkg/setting"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 	"fmt"
 )
@@ -20,8 +21,7 @@ func init() {
 		err error
 		dbType, dbName, user, password, host, tablePrefix string
 	)
-
-	sec, err := setting.Cfg.GetSection("database")
+	sec, err := setting.Cfg2.GetSection("database")
 
 	if err != nil {
 		log.Fatal(2, "Fail to get section 'database': %v", err)
@@ -48,7 +48,6 @@ func init() {
 	gorm.DefaultTableNameHandler = func (db *gorm.DB, defaultTableName string) string {
 		return tablePrefix + defaultTableName
 	}
-
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
