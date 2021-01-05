@@ -3,11 +3,11 @@ package api
 import (
 	"gin-blog/models"
 	"gin-blog/pkg/e"
+	"gin-blog/pkg/logging"
 	"gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"log"
-	"fmt"
 	"net/http"
 )
 
@@ -32,7 +32,6 @@ func PostAuth(c *gin.Context) {
 			token, err := util.GenerateToken(username, password)
 			if err != nil {
 				code = e.ERROR_AUTH_TOKEN
-				fmt.Println(err)
 				log.Println(err)
 			} else {
 				data["token"] = token
@@ -46,6 +45,7 @@ func PostAuth(c *gin.Context) {
 	} else {
 		for _, err := range valid.Errors {
 			log.Println(err.Key, err.Message)
+			logging.Error(err.Key, err.Message)
 		}
 	}
 

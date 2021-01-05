@@ -3,6 +3,7 @@ package v1
 import (
 	"gin-blog/models"
 	"gin-blog/pkg/e"
+	"gin-blog/pkg/logging"
 	"gin-blog/pkg/setting"
 	"gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
@@ -63,6 +64,10 @@ func AddTag(c *gin.Context) {
 		} else {
 			code = e.ERROR_EXIST_TAG
 		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Error(err.Key, err.Message)
+		}
 	}
 
 
@@ -110,6 +115,10 @@ func EditTag(c *gin.Context) {
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
 		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Error(err.Key, err.Message)
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -135,6 +144,10 @@ func DeleteTag(c *gin.Context) {
 			models.DeleteTag(id)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
+		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Error(err.Key, err.Message)
 		}
 	}
 
