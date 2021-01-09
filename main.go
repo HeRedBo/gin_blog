@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Printf("Server err: %v", err)
 	}
-	
+
 	//server := &http.Server{
 	//	Addr : fmt.Sprintf(":%d", setting.HttpPort),
 	//	Handler: router,

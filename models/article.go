@@ -1,10 +1,5 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-	"time"
-)
-
 type Article struct {
 	Model
 
@@ -19,15 +14,15 @@ type Article struct {
 	State int `json:"state"`
 }
 
-func (tag *Article) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (tag *Article) BeforeUpdate(scope *gorm.Scope) error  {
-	scope.SetColumn("ModifiedOn",time.Now().Unix())
-	return nil
-}
+//func (tag *Article) BeforeCreate(scope *gorm.Scope) error {
+//	scope.SetColumn("CreatedOn", time.Now().Unix())
+//	return nil
+//}
+//
+//func (tag *Article) BeforeUpdate(scope *gorm.Scope) error  {
+//	scope.SetColumn("ModifiedOn",time.Now().Unix())
+//	return nil
+//}
 
 
 func ExistArticleByID(id int) bool {
@@ -95,6 +90,13 @@ func EditArticle(id int, data interface {}) bool {
 
 	return true
 }
+
+func CleanAllArticle() bool {
+	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{})
+	return true
+}
+
+
 
 
 

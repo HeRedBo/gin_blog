@@ -1,10 +1,5 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-	"time"
-)
-
 type Tag struct {
 	Model
 
@@ -47,15 +42,15 @@ func AddTag(name string, state int, createdBy string) bool {
 	return true
 }
 
-func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error  {
-	scope.SetColumn("ModifiedOn",time.Now().Unix())
-	return nil
-}
+//func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
+//	scope.SetColumn("CreatedOn", time.Now().Unix())
+//	return nil
+//}
+//
+//func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error  {
+//	scope.SetColumn("ModifiedOn",time.Now().Unix())
+//	return nil
+//}
 
 
 func ExistTagByID(ID int) bool {
@@ -76,4 +71,14 @@ func DeleteTag(id int) bool {
 	db.Where("id = ?", id).Delete(&Tag{})
 	return true
 }
+
+func CleanAllTag() bool {
+	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Tag{})
+	return true
+}
+
+
+
+
+
 
