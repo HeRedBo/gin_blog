@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"gin-blog/pkg/setting"
 	"gin-blog/routers"
-	"github.com/fvbock/endless"
 	"log"
 	"syscall"
+
+	"github.com/fvbock/endless"
 )
 
 func main() {
@@ -18,14 +19,13 @@ func main() {
 	router := routers.InitRouter()
 
 	server := endless.NewServer(endpoint, router)
-	server.BeforeBegin = func(add string ) {
-		log.Printf("Actual pid is %d", syscall.Getpid() )
+	server.BeforeBegin = func(add string) {
+		log.Printf("Actual pid is %d", syscall.Getpid())
 	}
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Printf("Server err: %v", err)
 	}
-
 	//server := &http.Server{
 	//	Addr : fmt.Sprintf(":%d", setting.HttpPort),
 	//	Handler: router,
