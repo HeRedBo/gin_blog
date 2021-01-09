@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"gin-blog/models"
+	"gin-blog/pkg/logging"
 	"gin-blog/pkg/setting"
 	"gin-blog/routers"
 	"log"
@@ -11,13 +13,16 @@ import (
 )
 
 func main() {
-	endless.DefaultReadTimeOut = setting.ReadTimeout
-	endless.DefaultWriteTimeOut = setting.WriteTimeout
+	setting.Setup()
+	models.Setup()
+	logging.Setup()
+
+	endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
+	endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
-	endpoint := fmt.Sprintf(":%d", setting.HttpPort)
+	endpoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
 
 	router := routers.InitRouter()
-
 	server := endless.NewServer(endpoint, router)
 	server.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())
