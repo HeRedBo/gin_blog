@@ -86,7 +86,7 @@ func Mkdir(src string) error {
  * @return error
  */
 func Open(name string, flag int , perm os.FileMode) (*os.File , error ) {
-	f, err := os.OpenFile(name, falg, perm)
+	f, err := os.OpenFile(name, flag, perm)
 	if err != nil {
 		return nil, err
 	}

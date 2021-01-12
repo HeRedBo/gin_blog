@@ -14,7 +14,7 @@ import (
 )
 
 func GetImageFUllUrl(name string) string {
-	return setting.AppSetting.ImagePrefixURL + "/"  + name
+	return setting.AppSetting.ImagePrefixUrl + "/"  + GetImagePath() +  name
 }
 
 func GetImageName(name string) string {
