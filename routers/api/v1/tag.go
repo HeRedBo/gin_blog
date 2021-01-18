@@ -2,10 +2,13 @@ package v1
 
 import (
 	"gin-blog/models"
+	"gin-blog/pkg/app"
 	"gin-blog/pkg/e"
+	"gin-blog/pkg/export"
 	"gin-blog/pkg/logging"
 	"gin-blog/pkg/setting"
 	"gin-blog/pkg/util"
+	"gin-blog/service/tag_service"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
@@ -31,7 +34,11 @@ func GetTags(c *gin.Context) {
 
 	code := e.SUCCESS
 
-	data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
+	lists, err := models.GetTags(util.GetPage(c), setting.PageSize, maps);
+	if err != nil {
+		code = e.ERROR_EXIST_TAG
+	}
+	data["lists"] = lists
 	data["total"] = models.GetTagTotal(maps)
 
 	c.JSON(http.StatusOK, gin.H{
@@ -156,5 +163,29 @@ func DeleteTag(c *gin.Context) {
 		"msg" : e.GetMsg(code),
 		"data" : make(map[string]string),
 	})
+}
 
+func ExportTag(c *gin.Context) {
+	appG := app.Gin{ C:c}
+
+	name := c.PostForm("name")
+	state := 1
+	if arg := c.PostForm("state") ; arg != "" {
+		state = com.StrTo(arg).MustInt()
+	}
+
+	tagService := tag_service.Tag{
+		Name:       name,
+		State:      state,
+	}
+
+	filename , err := tagService.Export()
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_EXPORT_TAG_FAIL, nil )
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+		"export_url":      export.GetExcelFullUrl(filename),
+		"export_save_url": export.GetExcelPath() + filename,
+	})
 }

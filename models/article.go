@@ -1,5 +1,7 @@
 package models
 
+import "github.com/jinzhu/gorm"
+
 type Article struct {
 	Model
 
@@ -25,15 +27,18 @@ type Article struct {
 //}
 
 
-func ExistArticleByID(id int) bool {
+func ExistArticleByID(id int) (bool, error) {
 	var article Article
-	db.Select("id").Where("id = ? ", id ).First(&article)
+	err := db.Select("id").Where("id = ? ", id ).First(&article).Error
 
-	if article.ID > 0 {
-		return true
+	if err !=nil && err != gorm.ErrRecordNotFound {
+		return false ,err
 	}
 
-	return false
+	if article.ID > 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 /**
@@ -55,10 +60,20 @@ func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Articl
 /**
 获取单个文章详情
  */
-func GetArticle(id int) (article Article) {
-	db.Where("id = ?", id).First(&article)
-	db.Model(&article).Related(&article.Tag)
-	return
+func GetArticle(id int) (*Article, error){
+	//db.Where("id = ?", id).First(&article)
+	//db.Model(&article).Related(&article.Tag)
+	var article Article
+	err := db.Where("id = ? AND deleted_on = ? ", id , 0 ). First(&article).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil ,err
+	}
+
+	err = db.Model(&article).Related(&article.Tag).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return &article, nil
 }
 
 /**
