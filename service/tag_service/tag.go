@@ -64,10 +64,10 @@ func (t *Tag) GetALl() ([]models.Tag, error) {
 
 func (t *Tag) Export() (string , error) {
 	tags , err := t.GetALl()
-	if err !=nil {
+	if err != nil {
 		return "",err
 	}
-	
+
 	file := xlsx.NewFile()
 	sheet , err := file.AddSheet("标签信息")
 	if err !=nil {
@@ -77,20 +77,19 @@ func (t *Tag) Export() (string , error) {
 	row := sheet.AddRow()
 
 	var cell *xlsx.Cell
-
 	for _, title := range titles {
 		cell = row.AddCell()
 		cell.Value = title
 	}
-
+	timeLayout := "2006-01-02 15:04:05"  //转化所需模板
 	for _, v := range tags {
 		values := []string{
 			strconv.Itoa(v.ID),
 			v.Name,
 			v.CreatedBy,
-			strconv.Itoa(v.CreatedOn),
+			time.Unix(int64(v.CreatedOn), 0).Format(timeLayout),
 			v.ModifiedBy,
-			strconv.Itoa(v.ModifiedOn),
+			time.Unix(int64(v.ModifiedOn), 0).Format(timeLayout),
 		}
 		row = sheet.AddRow()
 		for _, value := range values {
@@ -99,10 +98,10 @@ func (t *Tag) Export() (string , error) {
 		}
 	}
 
-
-	time := strconv.Itoa(int(time.Now().Unix()))
-	filename := "tag_" + time + ".xlsx"
+	timeUnix := strconv.Itoa(int(time.Now().Unix()))
+	filename := "tag_" + timeUnix + ".xlsx"
 	fullPath := export.GetExcelFullPath() + filename
+	logging.Info(fullPath)
 	err = file.Save(fullPath)
 	if err !=nil {
 		return "",err
