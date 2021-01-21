@@ -7,7 +7,9 @@ import (
 	"gin-blog/pkg/gredis"
 	"gin-blog/pkg/logging"
 	"gin-blog/service/cache_service"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/tealeg/xlsx"
+	"io"
 	"strconv"
 	"time"
 )
@@ -126,3 +128,21 @@ func (t *Tag) getMaps() map[string]interface{} {
 	return maps
 }
 
+func (t *Tag) Import(r io.Reader) error {
+	xlsx, err := excelize.OpenReader(r)
+	if err != nil {
+		return err
+	}
+
+	rows := xlsx.GetRows("标签信息")
+	for  irow, row := range rows {
+		if irow > 0 {
+			var data []string
+			for _, cell := range row {
+				data = append(data,cell)
+			}
+			models.AddTag(data[1], 1, data[2])
+		}
+	}
+	return nil
+}

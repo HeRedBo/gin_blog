@@ -3,6 +3,7 @@ module gin-blog
 go 1.15
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/astaxie/beego v1.12.3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
