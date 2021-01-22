@@ -29,7 +29,7 @@ func  openLogFile(filename,  filePath string) (*os.File, error)  {
 		return nil , fmt.Errorf("os.Getwd err: %v", err)
 	}
 	src := dir + "/" + filePath
-	perm := file.CheckExist(src)
+	perm := file.CheckNotExist(src)
 	if perm == true {
 		return nil , fmt.Errorf("file.CheckPermission Permission dennied src: %v", src)
 	}

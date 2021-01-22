@@ -5,14 +5,20 @@ import (
 	"gin-blog/pkg/app"
 	"gin-blog/pkg/e"
 	"gin-blog/pkg/logging"
+	"gin-blog/pkg/qrcode"
 	"gin-blog/pkg/setting"
 	"gin-blog/pkg/util"
 	"gin-blog/service/article_service"
 	"github.com/astaxie/beego/validation"
+	"github.com/boombuler/barcode/qr"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 	"log"
 	"net/http"
+)
+
+const (
+	QRCODE_URL = "https://github.com/EDDYCJY/blog#gin%E7%B3%BB%E5%88%97%E7%9B%AE%E5%BD%95"
 )
 
 // 获取单个文章
@@ -44,12 +50,6 @@ func GetArticle(c *gin.Context) {
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, article)
-
-
-
-
-
-
 
 }
 
@@ -240,3 +240,15 @@ func DeleteArticle(c *gin.Context) {
 		"data" : make(map[string]string),
 	})
 }
+
+func GenerateArticlePoster(c *gin.Context)  {
+	appG := app.Gin{c}
+	qrc := qrcode.NewQrcode(QRCODE_URL,300, 300, qr.M, qr.Auto)
+	path := qrcode.GetQrcodeFullPath()
+	_,_, err := qrc.Encode(path)
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR, nil)
+	}
+	appG.Response(http.StatusOK,e.SUCCESS, nil)
+}
+
