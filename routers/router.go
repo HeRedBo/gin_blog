@@ -3,6 +3,7 @@ package routers
 import (
 	"gin-blog/middleware/jwt"
 	"gin-blog/pkg/export"
+	"gin-blog/pkg/qrcode"
 	"gin-blog/pkg/setting"
 	"gin-blog/pkg/upload"
 	"gin-blog/routers/api"
@@ -22,9 +23,11 @@ func InitRouter() *gin.Engine {
 	{
 		apiGroup.POST("/auth", api.PostAuth)
 	}
-	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 
+	
+	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.POST("/upload", api.UploadImage)
+	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrcodeFullPath()))
 
 
 	apiv1 := r.Group("/api/v1")
