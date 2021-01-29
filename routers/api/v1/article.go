@@ -257,13 +257,14 @@ func GenerateArticlePoster(c *gin.Context)  {
 			Y1:   700,
 		},
 		&article_service.Pt{
-			X: 128,
+			X: 125,
 			Y: 298,
 		},
 		)
 
 	_, filePath , err := articlePosterBgService.Generate()
 	if err != nil {
+		logging.Error(err)
 		appG.Response(http.StatusOK, e.ERROR_GEN_ARTICLE_POSTER_FAIL, nil)
 		return
 	}

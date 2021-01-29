@@ -38,7 +38,7 @@ func GetQrCodePath()  string {
 	return setting.AppSetting.QrCodeSavePath
 }
 
-func GetQrcodeFullPath() string {
+func GetQrCodeFullPath() string {
 	return setting.AppSetting.RuntimeRootPath + setting.AppSetting.QrCodeSavePath
 }
 
@@ -55,12 +55,20 @@ func (q *Qrcode) GetQrCodeExt() string {
 	return q.Ext
 }
 
+func (q *Qrcode) CheckEncode(path  string) bool {
+	src := path + GetQrCodeFileName(q.URL ) + q.GetQrCodeExt()
+	if file.CheckNotExist(src) == true {
+		return false
+	}
+	return true
+}
+
 func (q *Qrcode) Encode(path string) (string, string, error) {
 
 	name := GetQrCodeFileName(q.URL) + q.GetQrCodeExt()
 	src := path + name
 
-	if file.CheckNotExist(src ) == true {
+	if file.CheckNotExist(src) == true {
 		code , err :=qr.Encode(q.URL, q.Level, q.Mode)
 		if err != nil {
 			return "", "", err

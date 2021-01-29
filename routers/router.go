@@ -27,7 +27,7 @@ func InitRouter() *gin.Engine {
 	
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.POST("/upload", api.UploadImage)
-	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrcodeFullPath()))
+	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 
 	apiv1 := r.Group("/api/v1")
