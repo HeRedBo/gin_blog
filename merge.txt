@@ -6,8 +6,8 @@ type Article struct {
 	Title string `json:"title"`
 	Desc string `json:"desc"`
 	Content string `json:"content"`
-	CreatedBy string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
+	CreatedBy string `json:"created_by gorm:"index""`
+	ModifiedBy string `json:"modified_by gorm:"index""`
 	State int `json:"state"`
 }
 
