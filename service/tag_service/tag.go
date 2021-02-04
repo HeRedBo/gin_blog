@@ -26,10 +26,12 @@ type Tag struct {
 }
 
 func (t *Tag) ExistByName() (bool, error) {
-	//return models.ExistTagByName(t.name)
-	return true, nil
+	return models.ExistTagByName(t.Name)
 }
 
+func (t *Tag) ExistByID() (bool, error) {
+	return models.ExistTagByID(t.ID)
+}
 
 func (t *Tag) GetALl() ([]models.Tag, error) {
 	var (

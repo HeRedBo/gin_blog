@@ -1,6 +1,8 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Article struct {
 	Model
@@ -11,6 +13,7 @@ type Article struct {
 	Title string `json:"title"`
 	Desc string `json:"desc"`
 	Content string `json:"content"`
+	CoverImageUrl string `json:"cover_image_url"`
 	CreatedBy string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
 	State int `json:"state"`
@@ -44,17 +47,30 @@ func ExistArticleByID(id int) (bool, error) {
 /**
 获取文章总数
  */
-func GetArticleTotal(maps interface{}) (count int) {
-	db.Model(&Article{}).Where(maps).Count(&count)
-	return
+func GetArticleTotal(maps interface{}) (int,error) {
+	var count int
+	if err :=db.Model(&Article{}).Where(maps).Count(&count).Error; err !=nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 /**
 获取文章列表
  */
-func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Article) {
-	db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
-	return
+//func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Article) {
+//
+//	db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
+//	return
+//}
+
+func GetArticles(pageNum int, pageSize int, maps interface{}) ( []*Article, error) {
+	var articles []*Article
+	err :=db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return articles, nil
 }
 
 /**
@@ -79,17 +95,20 @@ func GetArticle(id int) (*Article, error){
 /**
 文章添加
  */
-func AddArticle(data map[string]interface{}) bool {
-	db.Create(&Article {
-		TagID : data["tag_id"].(int),
-		Title : data["title"].(string),
-		Desc : data["desc"].(string),
-		Content: data["content"].(string),
+func AddArticle(data map[string]interface{}) error {
+	article := Article{
+		TagID  : data["tag_id"].(int),
+		Title 	: data["title"].(string),
+		Desc 	: data["desc"].(string),
+		Content	: data["content"].(string),
 		CreatedBy: data["created_by"].(string),
-		State : data["state"].(int),
-	})
-
-	return true
+		State 	 : data["state"].(int),
+		CoverImageUrl: data["cover_image_url"].(string),
+	}
+	if err := db.Create(&article).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 /**
@@ -110,8 +129,4 @@ func CleanAllArticle() bool {
 	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{})
 	return true
 }
-
-
-
-
 

@@ -65,12 +65,23 @@ func AddTag(c *gin.Context) {
 	code := e.INVALID_PARAMS
 
 	if !valid.HasErrors() {
-		if !models.ExistTagByName(name) {
-			code = e.SUCCESS
-			models.AddTag(name, state, createdBy)
-		} else {
+		check, err := models.ExistTagByName(name)
+		if err != nil {
 			code = e.ERROR_EXIST_TAG
 		}
+
+		if check {
+			code = e.SUCCESS
+			models.AddTag(name, state, createdBy)
+		}
+
+		//if !models.ExistTagByName(name) {
+		//	code = e.SUCCESS
+		//	models.AddTag(name, state, createdBy)
+		//} else {
+		//	code = e.ERROR_EXIST_TAG
+		//}
+
 	} else {
 		for _, err := range valid.Errors {
 			logging.Error(err.Key, err.Message)
@@ -106,7 +117,16 @@ func EditTag(c *gin.Context) {
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
 		code = e.SUCCESS
-		if models.ExistTagByID(id) {
+		//exists , err := articleService.ExistByID()
+		//if err != nil {
+		//	appG.Response(http.StatusOK,e.ERROR_CHECK_EXIST_ARTICLE_FAIL,nil)
+		//	return
+		//}
+		exists , err := models.ExistTagByID(id)
+		if err != nil {
+			code = e.ERROR_NOT_EXIST_TAG
+		}
+		if exists {
 			data := make(map[string]interface{})
 			data["modified_by"] = modifiedBy
 			if name != "" {
@@ -117,9 +137,21 @@ func EditTag(c *gin.Context) {
 			}
 
 			models.EditTag(id, data)
-		} else {
-			code = e.ERROR_NOT_EXIST_TAG
 		}
+		//if models.ExistTagByID(id) {
+		//	data := make(map[string]interface{})
+		//	data["modified_by"] = modifiedBy
+		//	if name != "" {
+		//		data["name"] = name
+		//	}
+		//	if state != -1 {
+		//		data["state"] = state
+		//	}
+		//
+		//	models.EditTag(id, data)
+		//} else {
+		//	code = e.ERROR_NOT_EXIST_TAG
+		//}
 	} else {
 		for _, err := range valid.Errors {
 			logging.Error(err.Key, err.Message)
@@ -144,11 +176,19 @@ func DeleteTag(c *gin.Context) {
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
 		code = e.SUCCESS
-		if models.ExistTagByID(id) {
-			models.DeleteTag(id)
-		} else {
+
+		exists , err := models.ExistTagByID(id)
+		if err != nil {
 			code = e.ERROR_NOT_EXIST_TAG
 		}
+		if exists {
+			models.DeleteTag(id)
+		}
+		//if models.ExistTagByID(id) {
+		//	models.DeleteTag(id)
+		//} else {
+		//	code = e.ERROR_NOT_EXIST_TAG
+		//}
 	} else {
 		for _, err := range valid.Errors {
 			logging.Error(err.Key, err.Message)
