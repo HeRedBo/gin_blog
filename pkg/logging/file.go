@@ -9,11 +9,22 @@ import (
 )
 
 
-
+/**
+ * 获取日志文件保存路径
+ * @return string
+ * @date 2021-01-30 19:11:22
+ * @author RedBo
+ */
 func getLogFilePath() string {
 	return fmt.Sprintf("%s", setting.AppSetting.LogSavePath)
 }
 
+/**
+ * 获取日志文件名称
+ * @return string
+ * @date 2021-01-30 19:12:01
+ * @author RedBo
+ */
 func getLogFileName() string {
 	return fmt.Sprintf("%s%s.%s",
 		setting.AppSetting.LogSaveName,
@@ -22,7 +33,15 @@ func getLogFileName() string {
 	)
 }
 
-
+/**
+ * 打开日志文件
+ * @param filename
+ * @param filePath
+ * @return *os.File
+ * @return error
+ * @date 2021-01-30 19:15:23
+ * @author RedBo
+ */
 func  openLogFile(filename,  filePath string) (*os.File, error)  {
 	dir, err := os.Getwd()
 	if err != nil {

@@ -95,6 +95,15 @@ func Open(name string, flag int , perm os.FileMode) (*os.File , error ) {
 	return f, nil
 }
 
+/**
+ * 打开文件
+ * @param fileName
+ * @param filePath
+ * @return *os.File
+ * @return error
+ * @date 2021-01-30 19:08:55
+ * @author RedBo
+ */
 func MustOpen(fileName, filePath string) (*os.File,  error) {
 	dir , err := os.Getwd()
 	if err != nil {
